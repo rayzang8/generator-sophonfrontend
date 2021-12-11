@@ -1030,18 +1030,3 @@ dev srever 会运行在 9000 端口.
 
 你已经设置了一个带有环境标志的本地 webpack 配置。 如果你想为特定环境添加 webpack 配置，你可以将它们添加到 config/webpack 文件夹并在package.json 中为它们添加新的脚本.
 
-## -> 1.添加插件抽取样式生成独立的样式文件
-## -> 2.添加插件fork-ts-checker-webpack-plugin作类型检查
-## -> 3.添加less的支持
-## -> 4.添加sass moduless, less modules 的支持
-## -> 5.添加stylelint 可对样式进行 autofix
-## -> 6.将babel, eslint 的全局配置从package.json中分离到单独的配置文件中去
-## -> 7.添加types(.d.ts)文件以支持在源代码中import引入*.png, *.svg 等文件,也要支作为静态资源在页面中引入 
-## -> 8.更合理得分离dev与prod 的webpack配置,生产环境需要压缩js, 最后检查不同环境source map的生成情况
-## -> 9.完善模块文件(包括起更语义化的名字)以支持yeoman-generator生成的项目可以独立运行(需测试build出来的bundle 是否可用)
-## -> 10.添加dev server 支持https
-## 11.dev server 添加proxy
-## 12.package.json中script脚本兼容windows
-## 13.引入.npmrc到模板文件,gitlab.yml, dockerfile 等公司内部文件
-## 14.结合sophon-cli的配置和项目结构做成兼容的yeoman-generator
-## 15.添加husky
