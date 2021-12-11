@@ -252,8 +252,9 @@ yarn add -D typescript@"^4.0.0"
 ``` Javascript
 {
     "compilerOptions": {
-        "target": "ES2019",
-        "lib": [   // 要包含在类型检查过程中的标准类型
+        "target": "ES5",   // 指定编辑输出的 ECMAScript 目标版本: 'ES3' (default), 'ES5', 'ES6'/'ES2015', 'ES2016', 'ES2017', or 'ESNEXT'
+        "module": "esnext",   // 指定编辑输出所使用模块解析系统
+        "lib": [   // 指定编辑输出代码所要包含哪些新特性(类型检查过程中的标准类型们), 如果不用polyfile,则通常与target相互对应
             "dom",
             "dom.iterable",
             "esnext"
@@ -267,7 +268,7 @@ yarn add -D typescript@"^4.0.0"
         "forceConsistentCasingInFileNames": true,  // 兼容大小写敏感的系统与大小写不敏感的系统
         "moduleResolution": "node",  //模块解析策略, 采用node.js 的CommonJS
         "resolveJsonModule": true,   //允许从Json文件中引入模块
-        "isolatedModules": true, //在出现容易引发运行时错误的代码时给出警告, 分别的1.导出值不确定的标识符; 2.非模块文件; 3.操作常量enum的数值引用
+        "isolatedModules": false, //将每个文件作为单独的模块, 由于bootstrap.tsx文件不是一个模块,所以这里用false
         "noEmit": true,  //不生成文件, 在启用babel转义而非tsc转义时需要设置为true
         "jsx": "react", //tsx文件转译为js文件内所调用的React的方法, "react"调用React.createElement函数, React17+可以用React-jsx,它调用_jsx函数
         "rootDir": "./src", // TS源码所在位置
@@ -285,9 +286,9 @@ yarn add -D typescript@"^4.0.0"
 }
 ```
 
-> 此 tsconfig.js 文件定义了 typescript 在项目中的行为, 你也可以让它更严格. 有关选项的完整列表，请查看此处的文档: https://www.typescriptlang.org/tsconfig...
+> 此 tsconfig.js 文件定义了 typescript 在项目中的行为, 你也可以让它更严格. 有关选项的完整列表，请查看此处的文档: https://www.typescriptlang.org/tsconfig 和 https://jkchao.github.io/typescript-book-chinese/project/compilationContext.html#%E7%BC%96%E8%AF%91%E9%80%89%E9%A1%B9
 
-目前我使用 ES2019 作为编译目标, allowJs 为true，它允许您编写 js... 但这里最重要的是 noEmit 为 true.  所以我们不会在这里输出任何文件(.js或.d.ts都没有).  相反，我们使用 typescript 作为 babel 管道中的中间人, babel 会为我们转译 typescript. 此外，我已将根目录和 baseUrl 设置为 ./src 并为@routes 设置了一个路径别名，我将在本文档后面介绍.
+目前我使用 ES5 作为编译目标, allowJs 为true，它允许您编写 js... 但这里最重要的是 noEmit 为 true.  所以我们不会在这里输出任何文件(.js或.d.ts都没有).  相反，我们使用 typescript 作为 babel 管道中的中间人, babel 会为我们转译 typescript. 此外，我已将rootDir 和 baseUrl 设置为 ./src 并为@routes 设置了一个路径别名，我将在本文档后面介绍.
 
 ## Installing ESLint
 
@@ -710,7 +711,7 @@ export function getBaseWebPackConfig(env, argv) {
          *  中文说明 -> https://juejin.cn/post/6992887038093557796
          */
         splitChunks: {
-            chunks: 'all',
+            chunks: 'async',
             minSize: 20000,
             minRemainingSize: 0,
             minChunks: 1,

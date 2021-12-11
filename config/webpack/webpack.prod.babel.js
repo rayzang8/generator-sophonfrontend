@@ -37,7 +37,7 @@ function getProdWebPackConfig(env, argv) {
                 files: '**/*.(s(c|a)ss|css|less)',
                 fix: false
             }),
-            // new BundleAnalyzerPlugin()
+            new BundleAnalyzerPlugin()
         ],
     };
 

@@ -1,6 +1,7 @@
 {
     "compilerOptions": {
-        "target": "ES2019",
+        "target": "es2019",
+        "module": "esnext", 
         "lib": [
             "dom",
             "dom.iterable",
@@ -17,14 +18,11 @@
         "resolveJsonModule": true,
         "emitDeclarationOnly": true,        
         "declaration": true,
-        "isolatedModules": true,
+        "isolatedModules": false,
         "jsx": "react",
         "baseUrl": "./src",
         "rootDir": "./src",
         "paths": {
-            "#routes/*": [
-                "components/routes/*"
-            ],
             "#assets/*": [
                 "assets/*"
             ]
