@@ -1,7 +1,6 @@
 import React, {useEffect} from 'react';
 import { BrowserRouter, Routes, Route, Outlet, Navigate } from 'react-router-dom';
-// import { HomeRoute } from './routes/home';
-import { HomeRoute } from '#routes/home';
+import { Components } from './routes';
 
 export const App = (): React.ReactElement => {
     useEffect(()=> {
@@ -11,7 +10,7 @@ export const App = (): React.ReactElement => {
         <BrowserRouter>
             <Routes>                              
                 <Route path="/home" element={<Outlet />}>
-                    <Route path="/" element={(<HomeRoute />)} />                    
+                    <Route path="/" element={(<Components.Home />)} />                    
                 </Route>                
                 <Route path="*" element={<Navigate to="/home" /> } />
             </Routes>

@@ -22,9 +22,6 @@
         "baseUrl": "./src",
         "rootDir": "./src",
         "paths": {
-            "#routes/*": [
-                "components/routes/*"
-            ],
             "#assets/*": [
                 "assets/*"
             ]

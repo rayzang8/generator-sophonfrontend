@@ -105,7 +105,7 @@ export function getBaseWebPackConfig(env, argv) {
 
 
     config.resolve = {
-        extensions: ['.scss', '.js', '.jsx', '.tsx', '.ts'],
+        extensions: ['.less', '.scss', '.js', '.jsx', '.tsx', '.ts'],
         plugins: [
             new tsConfigPathPlugin() //设置webpack在编辑时使用 tsconfig.json 中的 paths 选项来定义别名，省去了在webpack配置项resolve 中再定义 alias
         ]

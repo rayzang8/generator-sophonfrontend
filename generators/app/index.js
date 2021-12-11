@@ -102,7 +102,6 @@ module.exports = class extends Generator {
     );
 
     const configFiles = [
-      '.gitignore',
       '.eslintrc.js',
       'tsconfig.json',
       'postcss.config.js',
@@ -116,6 +115,11 @@ module.exports = class extends Generator {
         this.destinationPath(applicationName, file)
       );
     });
+
+    this.fs.copy(
+      this.templatePath('rootConfigs', 'gitignore'),
+      this.destinationPath(applicationName, '.gitignore')
+    );
 
     this._writeFile(
       this.templatePath('rootConfigs/package.json.template'),
