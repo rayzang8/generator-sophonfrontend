@@ -1,0 +1,36 @@
+{
+  "name": "<%= applicationName %>",
+  "version": "0.1.0",
+  "description": "<%= applicationName %> sophon application, built with React.",
+  "main": "index.js",
+  "scripts": {
+    "build": "NODE_ENV=production webpack --config ./config/webpack/webpack.prod.babel.js",
+    "start": "NODE_ENV=development webpack serve --open --config ./config/webpack/webpack.dev.babel.js --env=localdev --port=9000",
+    "autofix": "npx eslint --fix ./src/**/*{.ts,.tsx} && npx stylelint --config \"./stylelint.config.js\"  --customSyntax postcss-scss \"./src/**/*.scss\" --fix && npx stylelint --config \"./stylelint.config.js\"  --customSyntax postcss-less \"./src/**/*.less\" --fix"
+  }, 
+  "author": "Sophon",
+  "license": "UNLICENSED", 
+  "repository": {},
+  "dependencies": {<% Object.keys(dependencies).forEach((key, index) => { %>
+    "<%= key %>": "<%= dependencies[key] %>"<% if (index !== Object.keys(dependencies).length - 1) { %>,<% } %><% }); %>
+  },
+  "devDependencies": {<% Object.keys(devDependencies).forEach((key, index) => { %>
+    "<%= key %>": "<%= devDependencies[key] %>"<% if (index !== Object.keys(devDependencies).length - 1) { %>,<% } %><% }); %>
+  },
+  "engines": {
+    "node": ">= <%= nodeVersion %>",
+    "<%= packageManager %>": ">= <%= packageManagerVersion %>"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
