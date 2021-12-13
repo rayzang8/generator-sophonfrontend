@@ -11,7 +11,12 @@ import ProgressBarPlugin from 'progress-bar-webpack-plugin';  // 输出构建进
 
 //根据构建环境获样式loader
 function getCssPipelineLoader(env, isCssModule) {
-    const cssPipelineLoader = [];
+    const cssPipelineLoader = [{
+        loader: 'postcss-loader', //docs -> https://github.com/webpack-contrib/postcss-loader
+        options: {
+            sourceMap: true
+        }
+    }];
     if (isCssModule) {
         cssPipelineLoader.unshift({
             loader: 'css-loader',
@@ -52,15 +57,15 @@ function getCssPipelineLoader(env, isCssModule) {
 }
 
 //根据构建环境生成不同的webpack配置项
-export function getBaseWebPackConfig(env, argv) {    
-    let config = {};    
+export function getBaseWebPackConfig(env, argv) {
+    let config = {};
 
     // 生成插件集合
     config.plugins = [
         // new webpack.DefinePlugin({
         //     'process.env.NODE_ENV': NODE_ENV  // 将从构建命令行获取的环境变量NODE_ENV, 传递到runtime(源码中可以获取process.env.NODE_ENV)
         // }),
-        new ProgressBarPlugin({format: `  :msg [:bar] ${chalk.cyanBright.bold(':percent')} (:elapsed s)`}),   // 进度条
+        new ProgressBarPlugin({ format: `  :msg [:bar] ${chalk.cyanBright.bold(':percent')} (:elapsed s)` }),   // 进度条
         new ForkTsCheckerWebpackPlugin({   // 此eslint 只负责js语法检查, 此插件负责做TS类型检查
             async: true
         }),
@@ -117,7 +122,7 @@ export function getBaseWebPackConfig(env, argv) {
         rules: [
             {
                 test: /\.(js|ts)x?$/i, //这个正则匹配 ts,js,tsx,jsx
-                exclude: /[\\/]node_modules[\\/]/, //忽略 node_modules,其中的代码切单独切分到 vendor chunk
+                exclude: /[\\/]node_modules[\\/]/, //忽略 node_modules,其中的代码切用splitChunks单独切分到 vendor chunk, /\\node_modules\\/ 是为了兼容windows系统
                 use: [
                     {
                         loader: 'babel-loader', //使用 babel loader， 现已不推荐使用 ts-loader
@@ -143,20 +148,22 @@ export function getBaseWebPackConfig(env, argv) {
                 type: 'asset/resource'
             },
             {
-                // 处理 *.modules.scss, *.modules.scss, *.modules.css
-                test: /\.module\.(sa|sc|c)ss$/,
+                test: /\.css$/, //处理 css 文件
                 include: [
                     paths.src,
-                    paths.nodemodules
+                    paths.nodemodules //项目的 node_modules 也可能提供css样式文件，所以要把它也包含进来
+                ],
+                use: [ //处理的 loaders 采用倒序，所以最后的 loader 最先执行
+                    ...getCssPipelineLoader(env)
+                ]
+            },
+            {
+                test: /\.module\.(sa|sc)ss$/,  // 处理 *.modules.sass, *.modules.scss
+                include: [
+                    paths.src,
                 ],
                 use: [
                     ...getCssPipelineLoader(env, true),
-                    {
-                        loader: 'postcss-loader',
-                        options: {
-                            sourceMap: true
-                        }
-                    },
                     {
                         loader: 'sass-loader',
                         options: {
@@ -168,19 +175,12 @@ export function getBaseWebPackConfig(env, argv) {
             },
             {
                 test: /\.(scss|sass)$/, //处理 scss 和 sass 文件
-                exclude: /\.module\.(sa|sc|c)ss$/i,
+                exclude: /\.module\.(sa|sc)ss$/i,
                 include: [
                     paths.src,
-                    paths.nodemodules //项目的 node_modules 也可能提供样式文件，所以要把它也包含进来
                 ],
                 use: [ //处理的 loaders 采用倒序，所以最后的 loader 最先执行
                     ...getCssPipelineLoader(env),
-                    {
-                        loader: 'postcss-loader', //docs -> https://github.com/webpack-contrib/postcss-loader
-                        options: {
-                            sourceMap: true
-                        }
-                    },
                     {
                         loader: 'sass-loader',
                         options: {
@@ -191,15 +191,12 @@ export function getBaseWebPackConfig(env, argv) {
                 ]
             },
             {
-                test: /\.module\.less$/,
+                test: /\.module\.less$/,     // 处理 *.modules.less
+                include: [
+                    paths.src,
+                ],
                 use: [
                     ...getCssPipelineLoader(env, true),
-                    {
-                        loader: 'postcss-loader',
-                        options: {
-                            sourceMap: true
-                        }
-                    },
                     {
                         loader: 'less-loader',
                         options: {
@@ -209,16 +206,13 @@ export function getBaseWebPackConfig(env, argv) {
                 ],
             },
             {
-                test: /\.less$/,
+                test: /\.less$/,     // 处理 *.less
+                include: [
+                    paths.src,
+                ],
                 exclude: /\.module\.less$/,
                 use: [
                     ...getCssPipelineLoader(env),
-                    {
-                        loader: 'postcss-loader',
-                        options: {
-                            sourceMap: true
-                        }
-                    },
                     {
                         loader: 'less-loader',
                         options: {
@@ -237,7 +231,7 @@ export function getBaseWebPackConfig(env, argv) {
          *  docs -> https://webpack.js.org/plugins/split-chunks-plugin/#defaults
          *  中文说明 -> https://juejin.cn/post/6992887038093557796
          */
-        splitChunks: { 
+        splitChunks: {
             chunks: 'async',
             minSize: 20000,
             minRemainingSize: 0,
@@ -257,10 +251,10 @@ export function getBaseWebPackConfig(env, argv) {
                     reuseExistingChunk: true,
                 },
                 react: {  // 将react 相关的代码打到一个chunk
-                    name: 'ReactVendors',   
+                    name: 'ReactVendors',
                     test: /[\\/]react/,
                     priority: 1,
-                  },
+                },
             },
         }
     };

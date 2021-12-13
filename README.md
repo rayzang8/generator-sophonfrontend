@@ -1041,8 +1041,9 @@ dev srever 会运行在 9000 端口.
 ## -> 8.更合理得分离dev与prod 的webpack配置,生产环境需要压缩js, 最后检查不同环境source map的生成情况
 ## -> 9.完善模块文件(包括起更语义化的名字)以支持yeoman-generator生成的项目可以独立运行(需测试build出来的bundle 是否可用)
 ## -> 10.添加dev server 支持https
-## 11.dev server 添加proxy
-## 12.package.json中script脚本兼容windows
-## 13.引入.npmrc到模板文件,gitlab.yml, dockerfile 等公司内部文件
-## 14.结合sophon-cli的配置和项目结构做成兼容的yeoman-generator
-## 15.添加husky
+## 11.启动脚本通过--env参数区别开发与产品环境, 以及是否启用webpack-bundle-analyzer插件分析打包大小
+## 12.添加跳转到错误页
+## 13.支持模块联邦,引入portal,注意输出文件的路径号与模块联邦歉容,结合sophon-cli的配置和项目结构做成兼容的yeoman-generator
+## 14.命令行传入port, dev server 的proxy, 模块联邦的template模板文件
+## 15.引入.npmrc到模板文件,gitlab.yml, dockerfile 等公司内部文件
+## 16.添加husky
