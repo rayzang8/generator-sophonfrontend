@@ -5,6 +5,7 @@ function paths() {
     this.src = path.join(this.root, 'src');
     this.styleLintConfig = path.join(this.root, 'stylelint.config.js');
     this.srcIndexEntry = path.join(this.src, 'index.tsx');
+    this.srcAssets = path.join(this.src, 'assets');
     this.srcScss = path.join(this.src, 'assets', 'scss');
     this.srcScssEntry = path.join(this.srcScss, 'app.scss');
     this.srcScssVendorEntry = path.join(this.srcScss, 'vendor.scss');

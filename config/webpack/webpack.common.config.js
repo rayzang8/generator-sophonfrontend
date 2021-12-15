@@ -9,6 +9,7 @@ import ESLintPlugin from 'eslint-webpack-plugin';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import ProgressBarPlugin from 'progress-bar-webpack-plugin';  // 输出构建进度
 
+
 //根据构建环境获样式loader
 function getCssPipelineLoader(env, isCssModule) {
     const cssPipelineLoader = [{
@@ -26,7 +27,7 @@ function getCssPipelineLoader(env, isCssModule) {
                 importLoaders: 2,
                 modules: {
                     localIdentName: '[folder]-[name]__[local]-[hash:6]',
-                },
+                }               
             }
         });
     } else {
@@ -101,18 +102,18 @@ export function getBaseWebPackConfig(env, argv) {
     };
 
     config.output = {
-        filename: '[name].[contenthash].js', //因为不只有一个 chunk, 所以输出的 chunk名基于 chunk名和它的hash值, hash值在内容变化时会改变
+        filename: 'sophon/[name].[contenthash].js', //因为不只有一个 chunk, 所以输出的 chunk名基于 chunk名和它的hash值, hash值在内容变化时会改变
         path: paths.dst, //打包输出路径
         clean: true, //目村路径如果存在，则先清除
         publicPath: 'auto',
-        assetModuleFilename: 'assets/[name][ext]' //资源文件存入assets/子目录下
+        assetModuleFilename: 'sophon/assets/[name][ext]' //资源文件存入assets/子目录下
     };
 
 
     config.resolve = {
         extensions: ['.less', '.scss', '.js', '.jsx', '.tsx', '.ts'],
         plugins: [
-            new tsConfigPathPlugin() //设置webpack在编辑时使用 tsconfig.json 中的 paths 选项来定义别名，省去了在webpack配置项resolve 中再定义 alias
+            new tsConfigPathPlugin(), //设置webpack在编辑时使用 tsconfig.json 中的 paths 选项来定义别名，省去了在webpack配置项resolve 中再定义 alias           
         ]
     };
 
@@ -145,7 +146,7 @@ export function getBaseWebPackConfig(env, argv) {
             {
                 // 这里是webpack 5 的新特性，原本在webpack 4 只能靠 file-loader, url-loader 来实现将资源文件打包到输出目录
                 test: /\.(woff(2)?|ttf|eot|svg|jpg|jpeg|png|gif|pdf)(\?v=\d+\.\d+\.\d+)?$/,
-                type: 'asset/resource'
+                type: 'asset/resource',
             },
             {
                 test: /\.css$/, //处理 css 文件

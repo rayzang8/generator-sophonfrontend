@@ -4,19 +4,17 @@ import { getBaseWebPackConfig } from './webpack.common.config';
 import { merge } from 'webpack-merge';
 
 
-const NODE_ENV = process.env.NODE_ENV === 'production' ? 'production' : 'development';
+// let NODE_ENV = process.env.NODE_ENV === 'production' ? 'production' : 'development';
 
-function getDevWebPackConfig(env, argv) {    
-    console.log('NODE_ENV', NODE_ENV);
+function getDevWebPackConfig(env, argv) {
     console.log('evn', env);
     console.log('argv', argv);
-    // config.mode = env; //设置运行模式
-    const webpackCommonConfig = getBaseWebPackConfig(NODE_ENV, argv);
+    const webpackCommonConfig = getBaseWebPackConfig('development', argv);
     // 这里可以在运行之前更改或覆盖从 getBaseWebPackConfig 取得的 webpack 配置对象
     // 比如可以改变Dev Server, 或路径配置, 以及任务你认为可以不同的设置 
 
     const webpackDevConfig = {
-        mode: 'development',
+        mode: 'development', //设置运行模式
         cache: true,  // development mode 下加快二次构建的速度
         devtool: 'source-map',
         devServer: {
@@ -30,10 +28,16 @@ function getDevWebPackConfig(env, argv) {
                 overlay: true,
                 logging: 'info' //在本地开发模式下,提供记录到客户端的所有信息
             },
-            static: {
-                publicPath: 'auto',
-                directory: paths.dst
-            },
+            static: [
+                {
+                    publicPath: '/',
+                    directory: paths.dst
+                },
+                {
+                    publicPath: '/',
+                    directory: paths.src
+                }
+            ],
             https: true,  // 如下语句支持传入自签证书文件
             // https: {
             //     ca: './path/to/server.pem',
