@@ -25,7 +25,10 @@
         "paths": {
             "#assets/*": [
                 "assets/*"
-            ]
+            ],
+            "#locales": [
+                "locales/i18nInstance.ts"
+            ],
 
         }
     },

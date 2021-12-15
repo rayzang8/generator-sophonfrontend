@@ -10,5 +10,13 @@
                 "useBuiltIns": "usage"
             }
         ]
+    ],
+    "plugins": [
+        ["i18next-extract", {
+            "locales": ["zh", "en"],
+            "defaultNS": "App",
+            "outputPath": "src/locales/extractedTranslations/{{locale}}/{{ns}}.json",
+            "keyAsDefaultValue": true
+        }]
     ]
 }

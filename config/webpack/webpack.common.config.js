@@ -68,7 +68,7 @@ export function getBaseWebPackConfig(env, argv) {
         // }),
         new ProgressBarPlugin({ format: `  :msg [:bar] ${chalk.cyanBright.bold(':percent')} (:elapsed s)` }),   // 进度条
         new ForkTsCheckerWebpackPlugin({   // 此eslint 只负责js语法检查, 此插件负责做TS类型检查
-            async: true
+            async: false
         }),
         new HtmlWebpackPlugin({
             title: '项目名',
@@ -102,9 +102,9 @@ export function getBaseWebPackConfig(env, argv) {
     };
 
     config.output = {
-        filename: 'sophon/[name].[contenthash].js', //因为不只有一个 chunk, 所以输出的 chunk名基于 chunk名和它的hash值, hash值在内容变化时会改变
+        filename: 'sophon/[name].[contenthash].js', //因为不只有一个 chunk, 所以输出的 chunk名基于 chunk名和它的hash值, hash值在内容变化时会改变(*.css样式文件也与*.js 位于同一层目录)
         path: paths.dst, //打包输出路径
-        clean: true, //目村路径如果存在，则先清除
+        clean: true, //目标路径如果存在，则先清除
         publicPath: 'auto',
         assetModuleFilename: 'sophon/assets/[name][ext]' //资源文件存入assets/子目录下
     };

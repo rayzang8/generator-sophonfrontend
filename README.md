@@ -1044,7 +1044,7 @@ dev srever 会运行在 9000 端口.
 ## -> 11.启动脚本通过--env参数区别开发与产品环境, 以及是否启用webpack-bundle-analyzer插件分析打包大小
 ## -> 12.添加跳转到错误页
 ## -> 13.页面中可以直接访问静态资源图片
-## 14.集成i18next
+## -> 14.集成i18next
 ## 15.支持模块联邦,引入portal,注意输出文件的路径号与模块联邦歉容,结合sophon-cli的配置和项目结构做成兼容的yeoman-generator
 ## 16.命令行传入port, dev server 的proxy, 模块联邦的template模板文件
 ## 17.引入.npmrc到模板文件,gitlab.yml, dockerfile 等公司内部文件

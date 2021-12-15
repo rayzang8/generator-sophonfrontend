@@ -1,16 +1,25 @@
 import React, {useEffect, useState} from 'react';
+import { lngs, loadResourceBundle } from '#locales';
 import logo from '#assets/images/logo.svg';
 import styles from './home.module.scss';
 import lessStyles from './home.module.less';
 import './home.scss';
 import './home.less';
+import { useTranslation } from 'react-i18next';
 
 export const Home = ():React.ReactElement => {
     // console.log(aaa);  // 测试 eslint 使用末定义的变量
     const [testState, setTestState] = useState<string>('');
+    const { t, i18n } = useTranslation('Home');
+    // i18n.addResourceBundle('zh', 'Home', require(`./extractedTranslations/zh/Home.json`), true, true);
+    // i18n.addResourceBundle('en', 'Home', require(`./extractedTranslations/en/Home.json`), true, true);
+    loadResourceBundle(i18n, 'Home');
+
     useEffect(() => {
         setTestState(`在应用代码中获取process.env.NODE_ENV值 = ${process.env.NODE_ENV}`);
     }, []);
+
+    const switchLanguage = (lng: string) => i18n.changeLanguage(lng);
     // if (testState) { // 测试 eslint hooks 错误
     //     const [oppsState] = useState<boolean>(true);
     // }
@@ -30,8 +39,15 @@ export const Home = ():React.ReactElement => {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <span className={lessStyles.test3}>Wellcome to Sophon's world! {testState}</span>
+            <span className={lessStyles.test3}>{t('欢迎来到Sophon宇宙')} {testState}</span>
           </a>
+          <div>
+          {Object.keys(lngs).map((lng) => (
+            <button key={lng} style={{ fontWeight: i18n.resolvedLanguage === lng ? 'bold' : 'normal' }} type="submit" onClick={() => switchLanguage(lng)}>
+              {lngs[lng].nativeName}
+            </button>
+          ))}
+        </div>
         </header>
       </div>
     );
