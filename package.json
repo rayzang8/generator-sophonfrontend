@@ -1,6 +1,6 @@
 {
   "name": "generator-sophonfrontend",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Transwarp Sophon Frontend Project Scaffolder",
   "main": "index.js",
   "scripts": {

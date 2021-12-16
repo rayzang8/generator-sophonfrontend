@@ -1,12 +1,13 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { loadResourceBundle } from '#locales';
 import './notFound.scss';
 
 
 export const NotFound  = () => {
-  const { t, i18n } = useTranslation('Error');
-  loadResourceBundle(i18n, 'Error');
+  const { t } = useTranslation('Error');
+  useEffect(() => loadResourceBundle('Error'), []);
+  
 
     return (
         <div className="page-error">

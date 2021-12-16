@@ -30,9 +30,9 @@ export const lngs: Record<string, any> = {
     en: { nativeName: 'English' }
 };
 
-export const loadResourceBundle = (i18nInstance: typeof i18n, ns: string) => {
+export const loadResourceBundle = (ns: string = 'App') => {
     Object.keys(lngs).forEach((lng) => {
-        i18nInstance.addResourceBundle(lng, ns, require(`./extractedTranslations/${lng}/${ns}.json`), true, true);
+        i18nInstance.addResourceBundle(lng, ns, require(`./extractedTranslations/${lng}/${ns}.json`));
     });
 };
 

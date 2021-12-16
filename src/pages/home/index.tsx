@@ -11,12 +11,14 @@ export const Home = ():React.ReactElement => {
     // console.log(aaa);  // 测试 eslint 使用末定义的变量
     const [testState, setTestState] = useState<string>('');
     const { t, i18n } = useTranslation('Home');
-    // i18n.addResourceBundle('zh', 'Home', require(`./extractedTranslations/zh/Home.json`), true, true);
-    // i18n.addResourceBundle('en', 'Home', require(`./extractedTranslations/en/Home.json`), true, true);
-    loadResourceBundle(i18n, 'Home');
+    
 
     useEffect(() => {
         setTestState(`在应用代码中获取process.env.NODE_ENV值 = ${process.env.NODE_ENV}`);
+        loadResourceBundle('Home');
+        // 相当于执行以下两行
+        // i18n.addResourceBundle('zh', 'Home', require(`../../locales/extractedTranslations/zh/Home.json`));
+        // i18n.addResourceBundle('en', 'Home', require(`../../locales/extractedTranslations/en/Home.json`));
     }, []);
 
     const switchLanguage = (lng: string) => i18n.changeLanguage(lng);

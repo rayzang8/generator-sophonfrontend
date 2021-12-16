@@ -1045,8 +1045,8 @@ dev srever 会运行在 9000 端口.
 ## -> 12.添加跳转到错误页
 ## -> 13.页面中可以直接访问静态资源图片
 ## -> 14.集成i18next
-## 15.支持模块联邦,引入portal,注意输出文件的路径号与模块联邦歉容,结合sophon-cli的配置和项目结构做成兼容的yeoman-generator
-## 16.命令行传入port, dev server 的proxy, 模块联邦的template模板文件
+## 15.命令行传入port, dev server 的proxy, 项目在在模块联邦中的名字
+## 16.引入portal,注意输出文件的路径号与模块联邦歉容,结合sophon-cli的配置和项目结构做成兼容的yeoman-generator
 ## 17.引入.npmrc到模板文件,gitlab.yml, dockerfile 等公司内部文件
 ## 18.treeshaking 副作用定义
 ## 19.添加husky
