@@ -63,6 +63,7 @@ function getCssPipelineLoader(env, isCssModule) {
 //根据构建环境生成不同的webpack配置项
 export function getBaseWebPackConfig(env, argv) {
     let config = {};
+<<<<<<< HEAD
     // 生成插件集合
     config.plugins = [
         // 将从构建命令行获取的环境变量NODE_ENV, 传递到runtime(源码中可以获取process.env.XXX)
@@ -76,6 +77,17 @@ export function getBaseWebPackConfig(env, argv) {
         new ProgressBarPlugin({ format: `  :msg [:bar] ${chalk.cyanBright.bold(':percent')} (:elapsed s)` }),   // 进度条
         new ForkTsCheckerWebpackPlugin({   // eslint 只负责js语法检查, 此插件负责做TS类型检查
             async: false
+=======
+
+    // 生成插件集合
+    config.plugins = [
+        // new webpack.DefinePlugin({
+        //     'process.env.NODE_ENV': NODE_ENV  // 将从构建命令行获取的环境变量NODE_ENV, 传递到runtime(源码中可以获取process.env.NODE_ENV)
+        // }),
+        new ProgressBarPlugin({ format: `  :msg [:bar] ${chalk.cyanBright.bold(':percent')} (:elapsed s)` }),   // 进度条
+        new ForkTsCheckerWebpackPlugin({   // 此eslint 只负责js语法检查, 此插件负责做TS类型检查
+            async: true
+>>>>>>> 12b3e236cfb94315a2ec28cee47ec104b5b99a50
         }),
         new HtmlWebpackPlugin({
             title: '项目名',
@@ -183,6 +195,19 @@ export function getBaseWebPackConfig(env, argv) {
                 ]
             },
             {
+<<<<<<< HEAD
+=======
+                test: /\.css$/, //处理 css 文件
+                include: [
+                    paths.src,
+                    paths.nodemodules //项目的 node_modules 也可能提供css样式文件，所以要把它也包含进来
+                ],
+                use: [ //处理的 loaders 采用倒序，所以最后的 loader 最先执行
+                    ...getCssPipelineLoader(env)
+                ]
+            },
+            {
+>>>>>>> 12b3e236cfb94315a2ec28cee47ec104b5b99a50
                 test: /\.module\.(sa|sc)ss$/,  // 处理 *.modules.sass, *.modules.scss
                 include: [
                     paths.src,

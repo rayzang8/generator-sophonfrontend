@@ -33,7 +33,12 @@ function getProdWebPackConfig(env, argv) {
                 configFile: paths.styleLintConfig,
                 files: '**/*.(s(c|a)ss|css|less)',
                 fix: false
+<<<<<<< HEAD
             })
+=======
+            }),
+            new BundleAnalyzerPlugin()
+>>>>>>> 12b3e236cfb94315a2ec28cee47ec104b5b99a50
         ],
     };
 

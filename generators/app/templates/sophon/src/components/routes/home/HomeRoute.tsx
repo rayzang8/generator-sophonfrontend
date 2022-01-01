@@ -1,11 +1,11 @@
 import React, {useEffect, useState} from 'react';
 import logo from '#assets/images/logo.svg';
-import styles from './home.module.scss';
-import lessStyles from './home.module.less';
-import './home.scss';
-import './home.less';
+import styles from './homeRoute.module.scss';
+import lessStyles from './homeRoute.module.less';
+import './homeRoute.scss';
+import './homeRoute.less';
 
-export const Home = ():React.ReactElement => {
+export const HomeRoute = ():React.ReactElement => {
     // console.log(aaa);
     const [testState, setTestState] = useState<string>('');
     useEffect(() => {
