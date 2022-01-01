@@ -89,7 +89,7 @@ module.exports = {
                     ".tsx"
                 ]
             },
-            "typescript": { // 识别路径别名
+            "typescript": {
                 "extensions": [
                     ".ts",
                     ".tsx",
