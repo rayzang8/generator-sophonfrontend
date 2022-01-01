@@ -1,4 +1,5 @@
 {
+    "only": ["config/","src/"],
     "presets": [
         [
             "@babel/preset-env",
@@ -7,8 +8,18 @@
                     "node": "current"
                 },
                 "corejs": "3",
-                "useBuiltIns": "usage"
+                "useBuiltIns": "usage" 
             }
+         
         ]
+    ],
+    "plugins": [
+        ["i18next-extract", {
+            "locales": ["cn", "en"],
+            "defaultNS": "App",
+            "outputPath": "src/locales/extractedTranslations/{{locale}}/{{ns}}.json",
+            "keyAsDefaultValue": true,
+            "discardOldKeys": true
+        }]
     ]
 }

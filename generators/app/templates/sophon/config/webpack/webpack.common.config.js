@@ -1,4 +1,6 @@
 import paths from '../paths'; //*本项目的路径库*
+import genModuleFederation from './module.federation';
+import webpack from 'webpack';
 //plugins for webpack
 import chalk from 'chalk';
 import HtmlWebpackPlugin from 'html-webpack-plugin'; //docs -> https://webpack.js.org/plugins/html-webpack-plugin/
@@ -8,10 +10,17 @@ import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin'; //docs 
 import ESLintPlugin from 'eslint-webpack-plugin';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import ProgressBarPlugin from 'progress-bar-webpack-plugin';  // 输出构建进度
+import { federationName } from './dev.server';
+
 
 //根据构建环境获样式loader
 function getCssPipelineLoader(env, isCssModule) {
-    const cssPipelineLoader = [];
+    const cssPipelineLoader = [{
+        loader: 'postcss-loader', //docs -> https://github.com/webpack-contrib/postcss-loader
+        options: {
+            sourceMap: true
+        }
+    }];
     if (isCssModule) {
         cssPipelineLoader.unshift({
             loader: 'css-loader',
@@ -21,7 +30,7 @@ function getCssPipelineLoader(env, isCssModule) {
                 importLoaders: 2,
                 modules: {
                     localIdentName: '[folder]-[name]__[local]-[hash:6]',
-                },
+                }               
             }
         });
     } else {
@@ -52,17 +61,21 @@ function getCssPipelineLoader(env, isCssModule) {
 }
 
 //根据构建环境生成不同的webpack配置项
-export function getBaseWebPackConfig(env, argv) {    
-    let config = {};    
-
+export function getBaseWebPackConfig(env, argv) {
+    let config = {};
     // 生成插件集合
     config.plugins = [
-        // new webpack.DefinePlugin({
-        //     'process.env.NODE_ENV': NODE_ENV  // 将从构建命令行获取的环境变量NODE_ENV, 传递到runtime(源码中可以获取process.env.NODE_ENV)
-        // }),
-        new ProgressBarPlugin({format: `  :msg [:bar] ${chalk.cyanBright.bold(':percent')} (:elapsed s)`}),   // 进度条
-        new ForkTsCheckerWebpackPlugin({   // 此eslint 只负责js语法检查, 此插件负责做TS类型检查
-            async: true
+        // 将从构建命令行获取的环境变量NODE_ENV, 传递到runtime(源码中可以获取process.env.XXX)
+         new webpack.DefinePlugin({
+            // 'process.env.NODE_ENV': 'development',  // 设置了mode 后会自动设置 process.env.NODE_ENV, 所以在这里再设置会报冲突
+            'process.version': JSON.stringify(require('../../package.json')?.version || '未获取版本信息') ,
+            'process.env.commit': JSON.stringify(`${require('child_process').execSync('git --no-pager show -s --format="%h"')}`),
+            'process.env.timestamp': JSON.stringify(`${require('child_process').execSync('git --no-pager show -s --format="%ai"')}`),
+            'process.env.federationName': JSON.stringify(federationName),
+         }),
+        new ProgressBarPlugin({ format: `  :msg [:bar] ${chalk.cyanBright.bold(':percent')} (:elapsed s)` }),   // 进度条
+        new ForkTsCheckerWebpackPlugin({   // eslint 只负责js语法检查, 此插件负责做TS类型检查
+            async: false
         }),
         new HtmlWebpackPlugin({
             title: '项目名',
@@ -82,6 +95,11 @@ export function getBaseWebPackConfig(env, argv) {
         })
     ];
 
+    // 添加模块联邦插件
+    if (federationName !== 'sophon') {
+        config.plugins.push(new webpack.container.ModuleFederationPlugin(genModuleFederation(require('../../package.json').dependencies)));
+    }
+
     //代码拆分，您可以使用此入口对象将您的应用定义为单独的entry chunk，这些chunk相互依赖以优化 webpack 生成包的方式。
     config.entry = {
         //告诉webpack有两个入口需要被拆分为chunk, 以app为入口chunk需要依赖以vendor 为入口的chunk
@@ -96,18 +114,18 @@ export function getBaseWebPackConfig(env, argv) {
     };
 
     config.output = {
-        filename: '[name].[contenthash].js', //因为不只有一个 chunk, 所以输出的 chunk名基于 chunk名和它的hash值, hash值在内容变化时会改变
+        filename: `${federationName}/[name].js`, //因为不只有一个 chunk, 所以输出的 chunk名基于 chunk名和它的hash值([name].[contenthash].js), hash值在内容变化时会改变(*.css样式文件也与*.js 位于同一层目录)
         path: paths.dst, //打包输出路径
-        clean: true, //目村路径如果存在，则先清除
+        clean: true, //目标路径如果存在，则先清除
         publicPath: 'auto',
-        assetModuleFilename: 'assets/[name][ext]' //资源文件存入assets/子目录下
+        assetModuleFilename: `${federationName}/assets/[name][ext]` //资源文件存入assets/子目录下
     };
 
 
     config.resolve = {
         extensions: ['.less', '.scss', '.js', '.jsx', '.tsx', '.ts'],
         plugins: [
-            new tsConfigPathPlugin() //设置webpack在编辑时使用 tsconfig.json 中的 paths 选项来定义别名，省去了在webpack配置项resolve 中再定义 alias
+            new tsConfigPathPlugin(), //设置webpack在编辑时使用 tsconfig.json 中的 paths 选项来定义别名，省去了在webpack配置项resolve 中再定义 alias           
         ]
     };
 
@@ -117,15 +135,26 @@ export function getBaseWebPackConfig(env, argv) {
         rules: [
             {
                 test: /\.(js|ts)x?$/i, //这个正则匹配 ts,js,tsx,jsx
-                exclude: /[\\/]node_modules[\\/]/, //忽略 node_modules,其中的代码切单独切分到 vendor chunk
+                exclude: /[\\/]node_modules[\\/]/, //忽略 node_modules,其中的代码切用splitChunks单独切分到 vendor chunk, /\\node_modules\\/ 是为了兼容windows系统
                 use: [
                     {
-                        loader: 'babel-loader', //使用 babel loader， 现已不推荐使用 ts-loader
+                        loader: 'babel-loader', //使用 babel-loader， 现已不推荐使用 ts-loader
                         options: {
                             presets: [
                                 '@babel/preset-env', //使用三种预置 env, react, typescript
                                 '@babel/preset-react',
                                 '@babel/preset-typescript'
+                            ],
+                            plugins: [
+                                [
+                                    '@babel/plugin-transform-runtime',  // 缩小打包size, runtime helper 指向一统一代码
+                                    {corejs: false }  // 指定 runtime-corejs 的版本
+                                    /**
+                                     * 配置corejs为3，需要预先安装@babel/runtime-corejs3
+                                     * 配置corejs为2，需要预先安装@babel/runtime-corejs2
+                                     * 配置corejs为false，需要预先安装@babel/runtime
+                                    */
+                                ]
                             ]
                         }
                     },
@@ -140,23 +169,26 @@ export function getBaseWebPackConfig(env, argv) {
             {
                 // 这里是webpack 5 的新特性，原本在webpack 4 只能靠 file-loader, url-loader 来实现将资源文件打包到输出目录
                 test: /\.(woff(2)?|ttf|eot|svg|jpg|jpeg|png|gif|pdf)(\?v=\d+\.\d+\.\d+)?$/,
-                type: 'asset/resource'
+                type: 'asset/resource',
             },
+            { test: /\.ya?ml/, type: 'json', use: 'yaml-loader' },
             {
-                // 处理 *.modules.scss, *.modules.scss, *.modules.css
-                test: /\.module\.(sa|sc|c)ss$/,
+                test: /\.css$/, //处理 css 文件
                 include: [
                     paths.src,
-                    paths.nodemodules
+                    paths.nodemodules //项目的 node_modules 也可能提供css样式文件，所以要把它也包含进来
+                ],
+                use: [ //处理的 loaders 采用倒序，所以最后的 loader 最先执行
+                    ...getCssPipelineLoader(env)
+                ]
+            },
+            {
+                test: /\.module\.(sa|sc)ss$/,  // 处理 *.modules.sass, *.modules.scss
+                include: [
+                    paths.src,
                 ],
                 use: [
                     ...getCssPipelineLoader(env, true),
-                    {
-                        loader: 'postcss-loader',
-                        options: {
-                            sourceMap: true
-                        }
-                    },
                     {
                         loader: 'sass-loader',
                         options: {
@@ -168,19 +200,12 @@ export function getBaseWebPackConfig(env, argv) {
             },
             {
                 test: /\.(scss|sass)$/, //处理 scss 和 sass 文件
-                exclude: /\.module\.(sa|sc|c)ss$/i,
+                exclude: /\.module\.(sa|sc)ss$/i,
                 include: [
                     paths.src,
-                    paths.nodemodules //项目的 node_modules 也可能提供样式文件，所以要把它也包含进来
                 ],
                 use: [ //处理的 loaders 采用倒序，所以最后的 loader 最先执行
                     ...getCssPipelineLoader(env),
-                    {
-                        loader: 'postcss-loader', //docs -> https://github.com/webpack-contrib/postcss-loader
-                        options: {
-                            sourceMap: true
-                        }
-                    },
                     {
                         loader: 'sass-loader',
                         options: {
@@ -191,15 +216,12 @@ export function getBaseWebPackConfig(env, argv) {
                 ]
             },
             {
-                test: /\.module\.less$/,
+                test: /\.module\.less$/,     // 处理 *.modules.less
+                include: [
+                    paths.src,
+                ],
                 use: [
                     ...getCssPipelineLoader(env, true),
-                    {
-                        loader: 'postcss-loader',
-                        options: {
-                            sourceMap: true
-                        }
-                    },
                     {
                         loader: 'less-loader',
                         options: {
@@ -209,16 +231,13 @@ export function getBaseWebPackConfig(env, argv) {
                 ],
             },
             {
-                test: /\.less$/,
+                test: /\.less$/,     // 处理 *.less
+                include: [
+                    paths.src,
+                ],
                 exclude: /\.module\.less$/,
                 use: [
                     ...getCssPipelineLoader(env),
-                    {
-                        loader: 'postcss-loader',
-                        options: {
-                            sourceMap: true
-                        }
-                    },
                     {
                         loader: 'less-loader',
                         options: {
@@ -233,11 +252,12 @@ export function getBaseWebPackConfig(env, argv) {
     // 配置webpack 如何拆分 chunk，并可以为 CSS 创建测试函数，以便 css get 被提取到它自己的chunk中。
     config.optimization = { // docs -> https://webpack.js.org/plugins/split-chunks-plugin/#defaults
         nodeEnv: env,   // nodeEnv的默认值与mode 一致,会利用 webpack.DefinePlugin 自动添加到 process.env.NODE_ENV 中去,所以无需再设置 DefinePlugin 插件
+        runtimeChunk: 'single',  // 若不加此项，remote 的portal container 会被init 两次导致js报错, 可以探研一下隐含的原因 
         /**
          *  docs -> https://webpack.js.org/plugins/split-chunks-plugin/#defaults
          *  中文说明 -> https://juejin.cn/post/6992887038093557796
          */
-        splitChunks: { 
+        splitChunks: {
             chunks: 'async',
             minSize: 20000,
             minRemainingSize: 0,
@@ -257,10 +277,10 @@ export function getBaseWebPackConfig(env, argv) {
                     reuseExistingChunk: true,
                 },
                 react: {  // 将react 相关的代码打到一个chunk
-                    name: 'ReactVendors',   
+                    name: 'ReactVendors',
                     test: /[\\/]react/,
                     priority: 1,
-                  },
+                },
             },
         }
     };

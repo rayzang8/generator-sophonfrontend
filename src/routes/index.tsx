@@ -1,19 +1,22 @@
-import React, {useEffect} from 'react';
-import { BrowserRouter, Routes, Route, Outlet, Navigate } from 'react-router-dom';
-import { Home } from '../components';
+import React, { lazy }  from 'react';
+import { BrowserRouter } from 'react-router-dom';
+import RootRoutes from './RootRoutes';
 
-export const RootRoutes = (): React.ReactElement => {
-    useEffect(()=> {
-        console.log('在应用代码中获取process.env.NODE_ENV值 =',process.env.NODE_ENV);
-    }, []);   
+export const AppRouter = (): React.ReactElement => {
     return (
         <BrowserRouter>
-            <Routes>                              
-                <Route path="/home" element={<Outlet />}>
-                    <Route path="/" element={(<Home />)} />                    
-                </Route>                
-                <Route path="*" element={<Navigate to="/home" /> } />
-            </Routes>
+            <RootRoutes />
         </BrowserRouter>
     );
 };
+
+const inject2PortalRoutes = [
+    {
+        module: process.env.federationName,
+        path: `/${process.env.federationName!}`,
+        component: lazy(() => import('./RootRoutes')),
+        children: []
+    }
+];
+
+export default inject2PortalRoutes;

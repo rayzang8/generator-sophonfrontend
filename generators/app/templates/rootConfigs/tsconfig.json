@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "target": "es2019",
+        "target": "ES5",
         "module": "esnext", 
         "lib": [
             "dom",
@@ -25,11 +25,17 @@
         "paths": {
             "#assets/*": [
                 "assets/*"
-            ]
+            ],
+            "#locales": [
+                "locales/i18nInstance.ts"
+            ],
 
         }
     },
     "include": [
         "src/**/*"
+    ],
+    "exclude": [
+        "src/menu/*"
     ]
 }

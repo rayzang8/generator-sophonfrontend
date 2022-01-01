@@ -1,22 +1,21 @@
 import paths from '../paths'; //*本项目的路径库*
 import SpeedMeasurePlugin from 'speed-measure-webpack-plugin';  // 构建速度分析
 import { getBaseWebPackConfig } from './webpack.common.config';
+import { devPort, proxyHeaders, reverseProxy, federationName } from './dev.server';
 import { merge } from 'webpack-merge';
 
 
-const NODE_ENV = process.env.NODE_ENV === 'production' ? 'production' : 'development';
+// let NODE_ENV = process.env.NODE_ENV === 'production' ? 'production' : 'development';
 
-function getDevWebPackConfig(env, argv) {    
-    console.log('NODE_ENV', NODE_ENV);
+function getDevWebPackConfig(env, argv) {
     console.log('evn', env);
     console.log('argv', argv);
-    // config.mode = env; //设置运行模式
-    const webpackCommonConfig = getBaseWebPackConfig(NODE_ENV, argv);
+    const webpackCommonConfig = getBaseWebPackConfig('development', argv);
     // 这里可以在运行之前更改或覆盖从 getBaseWebPackConfig 取得的 webpack 配置对象
     // 比如可以改变Dev Server, 或路径配置, 以及任务你认为可以不同的设置 
 
     const webpackDevConfig = {
-        mode: 'development',
+        mode: 'development', //设置运行模式
         cache: true,  // development mode 下加快二次构建的速度
         devtool: 'source-map',
         devServer: {
@@ -24,16 +23,27 @@ function getDevWebPackConfig(env, argv) {
             compress: true,   // 不设置时默认值就是true(开启gzip 压缩), 若想关闭,此处置为false, 查看network 的Content-Encoding
             historyApiFallback: true,
             hot: true, //打开模块热更新功 !
-            port: 9000,
+            headers: proxyHeaders,
+            port: devPort,
+            proxy: reverseProxy,
             client: {
                 progress: true,
-                overlay: true,
-                logging: 'info' //在本地开发模式下,提供记录到客户端的所有信息
+                logging: 'info', //在本地开发模式下,提供记录到客户端的所有信息
+                overlay: {
+                    warnings: true, // false时 warning 的时候，不做遮挡层处理
+                    errors: true
+                }
             },
-            static: {
-                publicPath: 'auto',
-                directory: paths.dst
-            },
+            static: [
+                {
+                    publicPath: '/',
+                    directory: paths.dst
+                },
+                {
+                    publicPath: `/${federationName}`,
+                    directory: paths.src
+                }
+            ],
             https: true,  // 如下语句支持传入自签证书文件
             // https: {
             //     ca: './path/to/server.pem',
@@ -54,7 +64,7 @@ function getDevWebPackConfig(env, argv) {
             }
         },
         optimization: {
-            minimize: false, // 默认情况下仅在生产环境不开启 CSS 优化，如果想在开发环境下启用 CSS 优化，请将 optimization.minimize 设置为 true, 且用 MiniCssExtractPlugin.loader 取代 style-loader
+            minimize: false // 默认情况下仅在生产环境不开启 CSS 优化，如果想在开发环境下启用 CSS 优化，请将 optimization.minimize 设置为 true, 且用 MiniCssExtractPlugin.loader 取代 style-loader
         }
     };
 

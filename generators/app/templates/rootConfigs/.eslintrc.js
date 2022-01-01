@@ -14,8 +14,8 @@ module.exports = {
         "ecmaFeatures": {
             "jsx": true
         },
-        // "project": "./tsconfig.json",
-        // "tsconfigRootDir": "./"
+        "project": "./tsconfig.json",  // TS类型检查
+        "tsconfigRootDir": "./"      // TS类型检查
     },
     "plugins": [
         "@typescript-eslint",   // 识别路径别名
@@ -27,35 +27,36 @@ module.exports = {
         "eslint:recommended",
         "plugin:@typescript-eslint/eslint-recommended",
         "plugin:@typescript-eslint/recommended",
-        // "plugin:@typescript-eslint/recommended-requiring-type-checking",
+        "plugin:@typescript-eslint/recommended-requiring-type-checking", // TS类型检查
         "plugin:react/recommended",
         "plugin:react-hooks/recommended"
     ],
-    "ignorePatterns": [".eslintrc.js"],  // 不检查自身
+    "ignorePatterns": [".eslintrc.js", "src/menu/*"],  // 不检查自身, 和 menu目录
     "rules": {
-        "import/no-unresolved": "warn",
         "prefer-rest-params": "off",
         "prefer-spread": "off",
         "eol-last": 2,
         "no-undef": 2,
         "quotes": [2, "single", { "avoidEscape": true, "allowTemplateLiterals": true }],  // 字符一般用单引号‘,允许用双引号"和连字号`
         "@typescript-eslint/interface-name-prefix": "off",
-        "@typescript-eslint/no-explicit-any": "off",
         "@typescript-eslint/explicit-function-return-type": "off",
         "@typescript-eslint/member-delimiter-style": "off",
-        "@typescript-eslint/no-non-null-assertion": "off",
         "@typescript-eslint/no-inferrable-types": "off",
-        "@typescript-eslint/no-use-before-define": "off",
         "@typescript-eslint/camelcase": "off",
         "@typescript-eslint/ban-ts-ignore": "off",
-        "@typescript-eslint/no-empty-interface": "off",
-        "@typescript-eslint/no-empty-function": "off",
         "@typescript-eslint/no-var-requires": "off",
-        "@typescript-eslint/no-this-alias": "off",
         "@typescript-eslint/semi": 2,
         "@typescript-eslint/triple-slash-reference": 0,
         "@typescript-eslint/no-unused-vars": ["warn"],
-        "@typescript-eslint/explicit-module-boundary-types": "off",
+        "@typescript-eslint/explicit-module-boundary-types": 0,
+        "@typescript-eslint/restrict-template-expressions": 1,
+        "@typescript-eslint/no-unsafe-assignment": 0,
+        "@typescript-eslint/no-floating-promises": 0,
+        "@typescript-eslint/no-unsafe-member-access": 0,
+        "@typescript-eslint/no-non-null-assertion": 0,
+        "@typescript-eslint/no-explicit-any": 0,
+        "@typescript-eslint/restrict-template-expressions": 0,
+        "@typescript-eslint/no-unsafe-call": 0,
         "react/display-name": "off",
         "react/prop-types": "warn",
         "react/no-string-refs": 0,

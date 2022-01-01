@@ -1,0 +1,77 @@
+const ip = require('ip');
+
+const devPort = <%= devPort %>;
+
+const proxyUrl = '<%= proxyUrl %>';
+
+const federationName = '<%= federationName %>';
+
+const portalServer = '<%= portalServer %>';
+
+const proxyHeaders = {
+    'X-Forwarded-Proto': 'https',
+    'X-Forwarded-For': ip.address(),
+    'X-Forwarded-port': devPort,
+    'Connection': 'Keep-Alive'
+};
+
+const websocketProxyUrl = proxyUrl.replace(/:(\d+)?$/, `:${<%= websocketPort %>}`);
+
+const reverseProxy = {
+    '/gateway/socket.io': {
+        pathRewrite: { '^/gateway': '' },
+        target: websocketProxyUrl,
+        secure: false,
+        changeOrigin: true,
+        ws: true,
+        headers: {
+            'X-Forwarded-Proto': 'https',
+            'X-Forwarded-For': <%= websocketPort %>,
+            Upgrade: '$http_upgrade',
+            Connection: 'upgrade'
+        }
+    },
+    '/gateway': {
+        target: proxyUrl,
+        proxyTimeout: 1000 * 60 * 60,
+        timeout: 1000 * 60 * 60,
+        secure: false,
+        changeOrigin: false,
+        headers: proxyHeaders,
+    },
+    '/api': {
+        target: proxyUrl,
+        secure: false,
+        logLevel: 'debug',
+        headers: proxyHeaders,
+    },
+    <% if (federationName !== 'sophon') { %>
+    '/portal': {
+        target: portalServer,
+        secure: false,
+        logLevel: 'debug',
+        headers:proxyHeaders,
+    },
+    '/uc': {
+        target: portalServer,
+        secure: false,
+        logLevel: 'debug',
+        headers:proxyHeaders,
+    },
+    '/settings': {
+        target: portalServer,
+        secure: false,
+        logLevel: 'debug',
+        headers:proxyHeaders,
+    }
+    <% } %>
+};
+
+module.exports = {
+    devPort,
+    proxyHeaders,
+    reverseProxy,
+    federationName,
+    portalServer
+};
+

@@ -16,6 +16,12 @@
 <%= packageManager %> start
 ```
 
+### Run Dev
+
+```sh
+<%= cmd %> start
+```
+
 ### Run Linting
 
 ```sh
@@ -25,44 +31,21 @@
 ### Run Linting with Fix
 
 ```sh
-<%= cmd %> lint:fix
+<%= cmd %> fix
 ```
 
 ### Run Style Linting
 
 ```sh
-<%= cmd %> stylelint
+<%= cmd %> lint:style
 ```
 
 ### Run Style Linting with Fix
 
 ```sh
-<%= cmd %> stylelint:fix
+<%= cmd %> fix:style
 ```
 
-### Run Unit Tests
-
-```sh
-<%= packageManager %> test
-```
-
-### Run Unit Tests with Coverage Report
-
-```sh
-<%= cmd %> test:coverage
-```
-
-### Run Unit Tests with Verbose Results
-
-```sh
-<%= cmd %> test:verbose
-```
-
-### Run Unit Tests and Watch for Changes
-
-```sh
-<%= cmd %> test:watch
-```
 
 ### Build for Production
 
@@ -74,18 +57,6 @@
 
 ```sh
 <%= cmd %> build:report
-```
-
-### Generate Documentation
-
-```sh
-<%= cmd %> docs
-```
-
-### Remove Output Directories
-
-```sh
-<%= cmd %> clean
 ```
 
 ## Technical Requirements

@@ -4,18 +4,25 @@
   "description": "<%= applicationName %> sophon application, built with React.",
   "main": "index.js",
   "scripts": {
-    "build": "NODE_ENV=production webpack --config ./config/webpack/webpack.prod.babel.js",
-    "start": "NODE_ENV=development webpack serve --open --config ./config/webpack/webpack.dev.babel.js --env=localdev --port=9000",
-    "autofix": "npx eslint --fix ./src/**/*{.ts,.tsx} && npx stylelint --config \"./stylelint.config.js\"  --customSyntax postcss-scss \"./src/**/*.scss\" --fix && npx stylelint --config \"./stylelint.config.js\"  --customSyntax postcss-less \"./src/**/*.less\" --fix"
+    "start": "webpack serve --open --config ./config/webpack/webpack.dev.babel.js",
+    "build": "webpack --config ./config/webpack/webpack.prod.babel.js",
+    "build:report": "webpack --config ./config/webpack/webpack.prod.babel.js --env=analysis",
+    "postbuild": "yarn copy-build-resource",
+    "copy-build-resource": "node ./config/scripts/copy-build-resource.js",
+    "lint": "npx eslint ./src/**/*{.ts,.tsx}",
+    "lint:style": "npx stylelint --config \"./stylelint.config.js\"  --customSyntax postcss-scss \"./src/**/*.scss\" && npx stylelint --config \"./stylelint.config.js\"  --customSyntax postcss-less \"./src/**/*.less\"",
+    "fix": "npx eslint --fix ./src/**/*{.ts,.tsx}",
+    "fix:style": "npx stylelint --config \"./stylelint.config.js\"  --customSyntax postcss-scss \"./src/**/*.scss\" --fix && npx stylelint --config \"./stylelint.config.js\"  --customSyntax postcss-less \"./src/**/*.less\" --fix"
   }, 
   "author": "Sophon",
-  "license": "UNLICENSED", 
+  "license": "ISC", 
   "repository": {},
   "dependencies": {<% Object.keys(dependencies).forEach((key, index) => { %>
-    "<%= key %>": "<%= dependencies[key] %>"<% if (index !== Object.keys(dependencies).length - 1) { %>,<% } %><% }); %>
+    "<%= key %>": "<%= dependencies[key] %>"<% if (index !== Object.keys(dependencies).length - 1) { %>,<% } %><% }); %><% if (federationName !== 'sophon') { %>,<% } %>
+    <% if (federationName !== 'sophon') { %>"@types/sophon": "0.5.4"<% } %>
   },
   "devDependencies": {<% Object.keys(devDependencies).forEach((key, index) => { %>
-    "<%= key %>": "<%= devDependencies[key] %>"<% if (index !== Object.keys(devDependencies).length - 1) { %>,<% } %><% }); %>
+    "<%= key %>": "<%= devDependencies[key] %>"<% if (index !== Object.keys(devDependencies).length - 1) { %>,<% } %><% }); %>    
   },
   "engines": {
     "node": ">= <%= nodeVersion %>",
@@ -32,5 +39,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "publishConfig": {
+    "registry": "http://172.16.1.161:30033/repository/npm-private/"
   }
 }

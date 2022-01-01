@@ -1,0 +1,5 @@
+#!/bin/bash
+pid=$(lsof -i:<%= devPort %> |grep \(LISTEN\) |awk '{print $2}')
+echo $pid
+kill -9 $pid
+yarn start
