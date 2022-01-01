@@ -95,8 +95,6 @@ yarn fix:style
 
 ## 在本文中，将向您展示如何从一个空命令行开始，使用 VSCode 和 Node.js 在 Typescript 中创建一个 Hello World React 应用程序，同时从头开始配置它. 同时将给出涵盖每个依赖项资源的链接.
 
-
-
 ## 初始化项目
 -----------
 
@@ -1305,6 +1303,8 @@ yarn add @types/react @types/react-router-dom@"5.1.2"
 -----------
 > 现在开始安装 i18next 及其初始化插件 i18next, react-i18next, i18next-browser-languagedetector, i18next-resource-store-loader
 > i18next-browser-languagedetector 用于获取当前语言, i18next-resource-store-loader用于加载语言资源文件
+i18next 相关文档可以查阅 https://www.i18next.com/
+react-i18next 相关文档可以查阅 https://react.i18next.com/
 
 **执行以下命令**
 
@@ -1334,7 +1334,7 @@ yarn add -D babel-plugin-i18next-extract
     ]
 ```
 only 表示需要babel解析的目录,
-plugins 数组中添加 i18next-extract 插件
+plugins 数组中添加 i18next-extract 插件, 相关文档查阅 https://i18next-extract.netlify.app/#/
 > locales 表示支持的语言
 > defaultNS 默认名称空间
 > outputPath 语言资源文件生成的位置,{{locale}}表示语言, {{ns}}表示名称空间
@@ -1382,9 +1382,9 @@ export const lngs: Record<string, any> = {
 
 
 
-## Run the local server and work on the code locally
+## 启动本地开发环境 
 
-Run the following command: 
+运行以下命令: 
 
 ``` yarn start ```
 
